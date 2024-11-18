@@ -1,45 +1,15 @@
-import {Card, Layout, List, Statistic, Typography, Spin, Tag} from "antd";
+import {Card, Layout, List, Statistic, Typography, Tag} from "antd";
 import {ArrowDownOutlined, ArrowUpOutlined} from '@ant-design/icons';
-import {useEffect, useState} from "react";
-import {fakeFetchCrypto, fetchAssets} from "../api.js";
-import {capitalize, percentDifferenc} from "../../utils.js";
+import {capitalize} from "../../utils.js";
+import {useContext} from "react";
+import CryptoContext from "../../context/crypto-context.jsx";
 
 const siderStyle = {
     padding: '1rem',
 }
 
 export default function AppSider() {
-    const [loading, setLoading] = useState(false);
-    const [crypto, setCrypto] = useState([])
-    const [assets, setAssets] = useState([])
-
-    useEffect(() => {
-        async function preload() {
-            setLoading(true);
-            const {result} = await fakeFetchCrypto()
-            const assets = await fetchAssets()
-
-            setAssets(assets.map(asset => {
-                    const coin = result.find(c => c.id === asset.id)
-                    return {
-                        grow: asset.price < coin.price,
-                        growPercent: percentDifferenc(asset.price, coin.price),
-                        totalAmount: asset.amount * coin.price,
-                        totalProfit: asset.amount * coin.price - asset.amount * asset.price,
-                        ...asset,
-                    }
-                })
-            )
-            setCrypto(result)
-            setLoading(false)
-        }
-
-        preload()
-    }, [])
-
-    if (loading) {
-        return <Spin fullscreen/>
-    }
+    const {assets} = useContext(CryptoContext);
 
     return (
         <Layout.Sider width="25%" style={siderStyle}>
@@ -67,16 +37,16 @@ export default function AppSider() {
                                 <span>
                                     {item.withTag && (
                                         <Tag color={asset.grow ? 'green' : 'red'}>
-                                        {asset.growPercent}%
+                                            {asset.growPercent}%
                                         </Tag>
-                                            )}
-                                {item.isPlain && item.value}
-                                            {!item.isPlain && (
+                                    )}
+                                    {item.isPlain && item.value}
+                                    {!item.isPlain && (
                                         <Typography.Text
-                                        type={asset.grow ? 'success' : 'danger'}>
+                                            type={asset.grow ? 'success' : 'danger'}>
                                             {item.value.toFixed(2)}$
-                                    </Typography.Text>
-                                            )}
+                                        </Typography.Text>
+                                    )}
                                     </span>
                             </List.Item>
                         )}
