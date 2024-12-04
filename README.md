@@ -13,3 +13,6 @@ CryptoApp is a modern web application for tracking cryptocurrencies. The project
 ## Technologies
 
  React, Ant Design 5.0, JavaScript, CSS, HTML
+
+ 
+ https://cryptoapp.kesug.com
